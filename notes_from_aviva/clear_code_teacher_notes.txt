@@ -1,0 +1,80 @@
+()	Parentheses	Function calls, tuples, grouping expressions
+[]	Brackets	Lists, indexing, slicing, list comprehensions
+{}	Braces	Dictionaries, sets, f-strings
+
+
+
+** module is ajust a sinle .py file ( short, lowercase names , underscoes only if thats improves readability
+* packages is a a directory containing an __init__.py file which allows rto store some modules
+
+CamelCase: The first letter is lowercase, and each subsequent word starts with an uppercase letter (e.g., myVariableName).
+PascalCase: Every word, including the first, starts with an uppercase letter (e.g., MyVariableName).
+
+
+
+
+
+**Protected (internal) attrs:**
+those ar  atributes that are supposed to be used winside method/ function only
+
+, we shouldn' be accessing  it directly outside the class , but it is not fobidden - it is just convention
+
+BLANK LINES
+
+ Key points for training:
+2 blank lines before load_data, main, and DataProcessor class.
+1 blank line between clean_data and get_summary methods.
+Inside clean_data, blank lines separate logical steps: removing nulls and normalizing.
+
+IMPORTS:
+
+Imports are at the top of the file.
+Grouped by origin:
+First: Python's built-in modules (os, sys, datetime)
+Then: Third-party libraries (numpy, pandas)
+Finally: Local project modules (my_project.utils, my_project.models)
+Each group is separated by a blank line for clarity.
+One import per line is used—this improves readability and avoids confusion.
+No wildcard imports like from module import *, which can pollute the namespace and make debugging harder.
+
+
+
+Exercise 1:
+
+Code should be clear even without comments ( function names)
+
+function parameters names  shouldn't be too generic if possible. If those are just floats, a, b are ok
+
+
+# 3) Type hints & annotations / Adnotacje typów
+
+**Use *PEP 484* type hints to improve readability and tooling (linters, mypy/pyright).**
+
+type hints? -> also called annotations, are extra code in your Python code that describe what type of values variables, parameters and return values should have
+
+type hints may ijmrpvoe tooling because they give extra informartion about your code that Python itself doesn't enforce at a 
+runtime - but editor, linters , and static analyzers can use to  catch mistakes early and make coding easier
+
+
+!!! it is good not to repeat the same arguments / parameters in Class definition  and init method definition, if those are the same- we can ignore  and leave it in one place
+
+
+Copy–paste blocks that differ in **one or two lines**. 
+
+* You can create a global static  variable for DEFAULT_SENDER if it is always the same
+
+
+
+EARLY RETURNS:
+prevent deeply nested structures, reduce need for comments
+
+
+
+
+
+
+LAST EXERCISES. Class has attributes so if we are calling
+amounts = []
+    for t in transactions:
+        amounts.append(t.amount)
+        w emay be calling amount atributo of a transaction class

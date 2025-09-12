@@ -1,0 +1,136 @@
+Explain 3 exemples of the LC usages, we have it in notebook
+
+ITERABLES:
+Imagine you have a box full of things:
+
+
+You can take them out one by one.
+That’s exactly what an iterable is in Python — it’s like a container of items you can go through one after another.
+
+list → [1, 2, 3]
+tuple → (1, 2, 3)
+str → "hello" (iterates over characters)
+range → range(5)
+
+Collections
+dict → iterates over keys by default (for k in my_dict:)
+set / frozenset
+
+
+You may wonder why there is a need for list comprehensions at all since we have a list() function. Obviously, list comprehensions are used not just for copying elements from some iterable into a list, but mainly for modifying them in some way to create a specific new list.
+
+** range() is a built-in Python function that generates a sequence of numbers. It's commonly used in loops and list comprehensions.
+
+3. The expression {**stock, **{...}}
+This uses dictionary unpacking:
+
+{**stock} → copy all key-value pairs from stock.
+Dictionary unpacking (**) is just a shortcut to copy and merge dictionaries without using .update().
+
+it is equivalent of using update() statement so instead of creating a loop when we will iterate through all of the key:valye pairs in dictionary to perform an update . we are using shorthand way by unpacking the dictionary
+
+You don’t need to repeat all the other keys (name, id, etc.).
+
+Those other keys remain unchanged, because they were already copied in step 1.
+
+If a key already existed (like "price"), it gets overwritten with the new value.
+
+If a key didn’t exist before (like "currency" in some cases), it just gets added.
+
+
+**{"price": ..., "currency": "PLN"} → overwrite (or add) these fields.
+
+So it creates a new dictionary based on stock, but with:
+
+price converted to PLN (stock["price"] * exchange_rate)
+
+currency changed to "PLN"
+
+For each stock in stock_levels:
+
+Make a new dictionary, same as the original,
+
+but with price converted and currency updated.
+
+Collect all those new dictionaries into a new list stock_levels_pln.
+
+
+EXERCISE:
+
+
+updated_price_transactions = [{**t, **{"price": t["price"] * 1.10}} if t["item"] == "TV" else t for t in transactions]
+updated_price_transactions
+
+list = [t["quantity"] * t["price"] for t in updated_price_transactions if t["item"] == "TV"]
+list
+
+revenue_updated  = sum([t["quantity"] * t["price"] for t in updated_price_transactions if t["item"] == "TV"])
+revenue_before = sum([t["quantity"] * t["price"] for t in transactions if t["item"] == "TV"])
+
+f'difference between revenues after price changes is {revenue_updated - revenue_before}'
+
+EXERCISES - CLEAN THE DATA
+
+
+step1 = [d for d in data if d is not None]
+step1
+step2 = [int(d) if isinstance(d, str) else d for d in step1]
+step2
+step3 = [d[1] if isinstance(d, tuple) else d for d in step2]
+step3
+step4 = [d for d in step3 if d >= 0]
+step4
+result = sorted(step4)
+result
+result_combined = [int(d) if isinstance(d, str)
+          else
+          d[1] if isinstance(d, tuple)
+          else
+          d
+          for d in data if d is not None]
+result_final =sorted( [d for d in result_combined if d >= 0])
+result_final
+
+Składanie słowników (ang. dict comprehensions)
+
+temperatures.items() is a dictionary view of (key, value) pairs.
+Use it when you want to iterate over both the day (key) and the temperature (value).
+It’s a dynamic view: it reflects changes to the dict.
+Unpack pairs as for key, value in dict.items(): ...
+Use .keys() for just keys and .values() for just values.
+
+
+
+
+
+
+Exercise
+Based on the data below, create a dictionary with the key "name" and the value "salary." We're interested in people with salaries below 10,000.
+
+
+# Placeholder for solution
+name_to_salary = {d["name"]: d["salary"] for d in data if d["salary"] < 10000}
+name_to_salary
+name_to_salary = {d["name"]: d["salary"] for d in data if d.get("salary", 0) < 10000}  -> Treat missing salary as 0
+
+
+
+
+NESTED:
+
+✅ This line:
+
+Extends temp_list by adding each converted temperature as individual elements.
+If the list comprehension returns [68.0, 77.0], then temp_list becomes:
+temp_list = [..., 68.0, 77.0]
+⚠️ This line:
+
+
+Appends the entire list as a single element to temp_list.
+So temp_list becomes:
+temp_list = [..., [68.0, 77.0]]
+(a list inside a list)
+
+
+Use += to flatten and add multiple elements.
+Use .append() to nest the list as one item.
