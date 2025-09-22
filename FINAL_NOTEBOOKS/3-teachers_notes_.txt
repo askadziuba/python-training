@@ -1,0 +1,163 @@
+Why loops slower - But, this is because we are creating a list by appending new elements to it at each iteration. This is slow.
+Each iteration calls the method lookup (.append) + function call overhead.
+So if you have 1 million iterations → that’s 1 million .append() calls.
+Python has to repeatedly jump between the loop and the list object’s method
+comprehension - > They are implemented in C under the hood.
+
+
+Q5: When should I avoid list comprehensions?
+A: If the logic is too complex or nested, the comprehension hurts readability. In those cases, use a regular for loop.
+
+Q6: Are list comprehensions memory-efficient?
+A: They create the whole list in memory. If you need something lazy (element by element), use a generator expression instead:
+
+--CORE SYNTAX ---
+ITERABLES:
+Imagine you have a box full of things:
+You can take them out one by one.
+That’s exactly what an iterable is in Python — it’s like a container of items you can go through one after another.
+list → [1, 2, 3]
+tuple → (1, 2, 3)
+str → "hello" (iterates over characters)
+range → range(5)
+#Collections#
+dict → iterates over keys by default (for k in my_dict:)
+set / frozenset
+
+** range() is a built-in Python function that generates a sequence of numbers. It's commonly used in loops and list comprehensions.
+
+----EXAMPLES-----
+In Python, if statements don’t need to explicitly check == True.
+does not just check == True.
+
+It checks whether the object is truthy — which combines:
+-Does the object exist (is it not None or empty)?
+-If it exists, does it evaluate as True in a boolean context?
+
+Why avoid == True?
+It’s redundant (double-checking something Python already does).
+It can even be misleading:
+Q: When should I use == True?
+A: Almost never. Only if you really need to distinguish True from other truthy values like 1 or "yes".
+
+---DICTIONARY UNPACKING---
+Dictionary unpacking (**) is just a shortcut to copy and merge dictionaries without using .update().
+it is equivalent of using update() statement so instead of creating a 
+loop when we will iterate through all of the key:valye pairs in dictionary to perform an update . we are using shorthand way by unpacking the dictionary
+You don’t need to repeat all the other keys (name, id, etc.).
+
+stock_update = [
+    {**stock, **{"price": stock["price"] * exchange_rate, "currency": "PLN"}}
+    for stock in stock_levels
+]
+First copies everything from stock.
+Then merges another dictionary ({"price": ..., "currency": ...}).
+
+
+Those other keys remain unchanged, because they were already copied in step 1.
+If a key already existed (like "price"), it gets overwritten with the new value.
+If a key didn’t exist before (like "currency" in some cases), it just gets added.
+
+--DICTIONARY UNPACKING --
+
+temperatures.items() is a dictionary view of (key, value) pairs.
+Use it when you want to iterate over both the day (key) and the temperature (value).
+It’s a dynamic view: it reflects changes to the dict.
+Unpack pairs as for key, value in dict.items(): ...
+Use .keys() for just keys and .values() for just values.
+It’s not a list, but it behaves like an iterable
+
+( )	Parentheses	Round brackets	
+[ ] Square brackets Brackets
+{} curlu braces Braces
+
+
+---dict(temperatures_list)
+
+you can easily create dict from a list
+for list crrateion you need to call items()
+so whenever it is possible use built-in methods as list comprehension wont be needed
+
+--SETS---- {}
+No duplicates (automatically removes them)
+No guaranteed order (although implementation may look ordered)
+No indexing or slicing (must iterate or use membership tests)
+✅ Allowed: numbers, strings, tuples (with immutable elements).
+❌ Not allowed: lists, other sets, dicts.
+
+--NESTED-----
+Outer comprehension = rows.
+Inner comprehension = filter + transform each element in the row.
+
+append-> Appends the entire list as a single element to temp_list.
+So temp_list becomes:
+temp_list = [..., [68.0, 77.0]]
+(a list inside a list)
+
++= -> Extends temp_list by adding each converted temperature as individual elements.
+
+Use += to flatten and add multiple elements.
+Use .append() to nest the list as one item.
+
+---FLATTENED LIST COMPREHENSION----
+we’re drilling down: first over the outer list, then over each inner list, all in one comprehension.
+
+
+------NESTED DICTIONARIES----
+If we are not modyfyng original objects butu only filtering them we won't have nested complrehension
+Again if we woul dlike to keep the structure and make transformations we need to nest dict comprehension inside dict comprehension
+If we woul dlike to fltten it we are going through the outer dict then inner dict and asking for specific key:value pattern
+
+---GENERATOR EXPRESSIONS ---
+funkcja-> catering
+genraator -> dowoz na zamowienie
+Use the chef analogy: a list = buffet (everything cooked in advance), a generator = chef cooking meals on demand.
+Difference between generators and normal functions:
+A normal function runs once, returns a value, and exits.
+A generator function can pause (yield) and later continue where it left off, producing a sequence of results over time.
+Q: Can a generator be reused?
+A: No — once you iterate over it, it’s exhausted.
+Q: Is a generator faster than a list?
+A: Not necessarily. It’s about memory efficiency, not raw speed.
+Q: Can I index into a generator?
+A: No, generators don’t support indexing (gen[0] won’t work). You must iterate.
+Q: Can I convert a generator into a list?
+A: Yes → list(generator) consumes it and stores all values.
+---GENERATOR EXHAUSTED------
+When we say a generator is exhausted, it means that the generator has already produced (yielded) all of its values,
+ and there are no more values left to generate.
+To use it again, you need to create a new generator instance by calling the generator function again.
+---GENERATOR EXPRESSIONS---
+"Think of a generator expression as a recipe — not the finished meal. The meal is cooked only when you ask for it."
+"The syntax looks almost identical to a list comprehension, but we use parentheses () instead of square brackets []."
+
+---GENERATOR CHAIN
+
+--So this generator produces one random sensor reading at a time
+Picks a random sensor from SENSORS (choice(SENSORS)).
+Picks a random integer between -30 and 30.
+Returns that tuple (sensor, value).
+
+--filter_extreme_values(data) -acts like a filter gate, letting only "reasonable" sensor values pass through.
+asks the upstream generator (data) for the next (sensor, value).
+if value is within [-20, 20], it yields that tuple.
+If not, it skips it and immediately pulls the next one from upstream.
+
+--normalize(data) - ransforms values into a normalized scale.
+it pulls one (sensor, value) from upstream
+Divides the value by 20.
+Yields (sensor, normalized_value).
+
+--tag(data) ---adds extra information (a label) to each data point.
+It pulls one (sensor, value) from upstream.
+Computes status: "OK" if the value is small (between -0.5 and 0.5)., "CHECK" otherwise.
+Yields (sensor, value, status).
+
+-----------Combined pipeline-----------
+When you iterate over tagged: -> Python asks tag for the next value.-> tag asks normalize for the next value.
+-> normalize asks filter_extreme_values for the next value. -> filter_extreme_values asks read_sensor_data for the next raw reading
+-> read_sensor_data produces (sensor, raw_value)
+
+This value travels downstream:-> If accepted by filter_extreme_values, it goes further. ->Gets normalized. ->Gets tagged. ->Finally yielded to you.
+---materialisation---
+tagged_list = list(tag(...))

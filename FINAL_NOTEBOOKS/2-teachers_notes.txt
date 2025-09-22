@@ -1,0 +1,210 @@
+“PEP stands for Python Enhancement Proposal. 
+They’re design documents for the Python language, libraries, and processes. PEP 8 is just one of them — the style guide.
+
+“Think of PEP 8 like driving rules. If everyone drives on the same side of the road, traffic flows smoothly. If one person decides to drive on the opposite side just because it feels natural, suddenly you have accidents. 
+Code style is the same: you follow the road rules not because your car demands it, but because other drivers do.”
+
+Q: What if my company has its own style guide?
+A: Then follow the company’s guide. 
+Most company guides are just PEP 8 with a few local tweaks. Consistency within the team is more important than global consistency.
+
+-----------------------------
+FORMATTERS/ LINTERS:
+
+Formatter = fixes style automatically.
+Linter = points out issues, but you must fix (or auto-fix with some tools).
+
+“Having a formatter is like having an impartial referee. You can’t get mad at a teammate for nitpicking style if everyone’s code is reformatted automatically the same way.
+ It removes personal preference from the equation.”
+
+ “Think of Black as a dishwasher. You could wash dishes manually (fixing spaces, tabs, commas by hand), 
+ but why would you if you have a machine that does it the same way every time?”
+
+ PyCharm ->  has its own formatter (written in Java/Kotlin, part of the IDE), which enforces indentation, spacing, and wrapping.
+ You can configure PyCharm to delegate formatting completely to Black (very popular in teams), while still using inspections for things Black doesn’t cover (like naming).
+
+ VSCode -> Unlike PyCharm, VS Code doesn’t ship with its own opinionated formatter. 
+ Instead, it acts as a host for external tools. This means when VS Code “applies PEP 8,” it’s really delegating to formatters and linters you install.
+ The Python extension lets you plug in pylint, flake8, or ruff. You can also install black.
+
+--------------------module vs package ---------
+
+MODULE -> A single .py file containing Python definitions (functions, classes, variables).
+PACKAGE - > A directory (folder) with an __init__.py file that groups multiple modules together.
+
+
+------------utrata dostepu do wbudowanego typu ---------------------
+nadpisanie built-in
+W Pythonie możesz bez problemu nadać zmiennej nazwę list (albo dict, str, id itd.). Ale… od tej chwili przesłaniasz (overshadow) wbudowaną klasę list.
+Jeśli spróbujesz utworzyć nową listę w zwykły sposób: zamiast dostać klasę list, interpreter spróbuje wywołać twoją zmienną list — i wyrzuci błąd:
+Tracisz dostęp do wbudowanego typu.
+
+---CONSTANTS use by one function ---------------
+It’s fine to define it inside the function, but don’t use UPPER_CASE — because UPPER_CASE signals global/shared usage.
+
+---PRIVATE/ PROTECTED/DUNDER------------
+PRIVATE  -Python won’t stop you from accessing it — it’s just a warning sign for developers.
+PROTECTED  -Triggers name mangling: Python internally renames it to _ClassName__attribute
+DUNDER - Special reserved names used by Python’s internals. You should not invent your own.
+
+-------------non used variables _ 
+it’s a placeholder that says: I acknowledge this exists, but I don’t care about its actual value.”
+
+---PEP8 vs Google
+PEP 8 → The official Python style guide, maintained by the Python community.
+Google Python Style Guide → Created internally at Google for consistency across its massive codebase, later published publicly.
+For example, Facebook/Meta has internal Python rules, and projects like NumPy and Django also publish their own guidelines — usually extending PEP 8.
+
+
+------------LINE LENGTH--------
+The 79-character limit comes from the early days of programming when code was viewed on 80-character terminals.
+One column is reserved for editors and tools (like line numbers or break markers).
+
+
+
+( )	Parentheses	Round brackets	
+[ ] Square brackets Brackets
+{} curlu braces Braces
+
+✔ każdy element logiczny w nowej linii = łatwo śledzić warunki.
+
+---INDENTATION-----
+
+Why 4 spaces?
+PEP 8 standardizes on 4 spaces because it strikes a balance between readability and line length.
+2 spaces (like in JavaScript) make nesting harder to see; 8 spaces (like in older C code) waste space.
+4 spaces is a community-wide compromise — and virtually every major project follows it.
+
+---TABS----
+!!!!Tabs render differently in different editors (sometimes as 4, sometimes as 8 spaces).
+
+Q: What happens if I mix tabs and spaces?
+A: Python 3 throws an IndentationError. It’s one of the strictest rules in the interpreter.
+
+
+---IMPORTS
+Q: Why not import only inside the function where I need it?
+A: Sometimes you can (e.g., for optional or heavy dependencies), but generally it hides what your file depends on.
+
+!!! from module import * ( use import numpy as np)
+All public names from the module are dumped into the current namespace.
+Namespace pollution - Too many names in your scope, increasing the chance of accidental conflicts.
+Example: is mean() from statistics, numpy, or a custom function?
+
+import numpy as np → “Keep the whole toolbox labeled np; every tool I grab comes from it.”
+from numpy import mean → “Just bring me the hammer from the toolbox, but don’t bring the whole box.”
+
+--------------------------------------------
+
+
+----------TYPE HINTS AND ANNOTATION-------------
+Yes — type hints are evaluated by Python at runtime when the function/class is created.
+They don’t change runtime behavior, but they supercharge humans and tools (IDEs, linters, mypy/pyright).” 
+Python doesn't check type hints and will not throw an error if wrong type is used, but IDE/ additional tolls libraries can do that.
+Type hints must match truth. A wrong hint is worse than no hint (it misleads tools and people).
+
+Linters like Ruff. Flake Pylint -> With type hints, linters can also check type consistency (not just spacing or naming).
+
+mypy and pyright are type checkers, not general linters. mypy / pyright = type correctness (does the code you wrote match the type hints you declared).
+pyright is faster and integrated with VS Code; mypy is older, widely used, and has more ecosystem support.
+
+---OPTIONAL----
+typing - It’s a standard library module in Python (since 3.5). Provides classes and helpers for writing type hints.
+Optional - one value as it is just option other to None
+
+---ANY----
+ -Assigning a variable as Any disables type checking.
+- Tools like mypy/pyright stop checking what happens with that variable.
+
+---LIST DICT-----
+Before Python 3.9, you could not write list[str] or dict[str, int] directly.
+From Python 3.9 onward, built-in collections became subscriptable:
+Q: Does list[str] enforce that only strings can go inside?
+A: At runtime, no — Python won’t stop you. But linters/type checkers will warn you.
+
+Q: What’s the difference between tuple[float, float] and list[float]?
+A: Tuples are fixed-size and immutable; lists are dynamic and mutable.
+
+---CALLABLE
+
+Callable[[int, int], int] -> a function that takes two integers as an argument and returns an integers
+
+--TYPEDICT-----
+Introduced in PEP 589.
+Lets you declare the expected keys and value types of a dictionary.
+Great for JSON-like data or API responses where you know the schema.
+
+
+---ALIASES---
+Type alias = nickname for a long name.
+Use aliases only for long, complex, or domain-specific types that appear often.
+
+---ANNOTATIONS----
+Type hints are usefull for humans and IDEs but also are evaluated at a runtime ( when Python goes through the function and stores it in the memory)
+__annotations__ → it’s always created at function definition time.
+We won't be using annotations but tools may be.(FastAPI or libraries like typeguard use annotations to automatically check inputs.
+typeguard - >to zewnętrzna biblioteka Pythona, która potrafi sprawdzać adnotacje typów (type hints) w czasie działania programu (runtime).
+fastAPI - >to framework webowy w Pythonie, służący głównie do budowania API (interfejsów programistycznych) – np. 
+backendów do aplikacji mobilnych, stron www ->Walidacja danych automatyczna jeżeli uzyjesz type hints
+a) Often, two classes need to reference each other.  Example: a Cat has an Owner, and an Owner may also have a list of Cats.
+b) Sometimes you want to group related classes logically
+
+
+-----DOCSTRING---
+Docstring = an instruction manual built into the function.
+Docstring = what a function/class/module does, why it exists.
+Inline comment = how the code works (implementation detail).
+
+Docstrings are available at runtime → libraries like help(), pydoc, FastAPI, Sphinx use them.
+
+Google style → industry, general-purpose, easy to read.
+NumPy style → scientific projects, research, data science.
+Sphinx (reST) style → big open-source libraries, auto-generated docs.
+
+Q: Do docstrings affect performance?
+A: No, they’re just stored in memory.
+
+Q:Should private functions have docstrings?
+A: Not always — but every public function, class, and module should.
+(A private function is a function that’s intended for internal use only inside a module or class.)
+
+Q: Is there a tool to check for missing docstrings?
+A: Yes — linters like Pylint, Flake8 (with plugins), or Ruff can enforce docstring presence.
+
+!!!Do not repeat type hints in the docstrings
+Docstrings should explain purpose and meaning, not repeat type information.
+!!! it is good not to repeat the same arguments / parameters in Class definition  and init method definition, if those are the same- we can ignore  and leave it in one place
+
+
+----_doc_--------------
+Think of __doc__ as the “label inside the box” that tells you what’s inside (what the function/class does).
+Every Python object (module, class, function, method) has a special attribute __doc__.
+If a docstring is defined, it’s stored there as a plain string.
+
+USAGE:
+Libraries like Sphinx, pydoc, FastAPI, Typer use __doc__ to auto-generate documentation or CLI help.
+Example: FastAPI uses function annotations + docstrings to generate API docs (Swagger UI).
+
+
+---DRY-----
+“avoid duplicating knowledge.”
+Q: Is all duplication bad?
+A: No. Small duplication is sometimes clearer. DRY should not reduce readability.
+Q: What’s the risk of overusing DRY?
+A: “Over-abstraction” → making the code too generic and hard to understand.
+Q: When should I keep duplication?
+A: If removing it makes the code harder to read or understand.
+Balance with KISS (Keep It Simple, Stupid) and readability.
+
+Sonarqube
+
+-------COMMENTING---------
+
+----EARLY returns-----
+
+Uses nested if statements → logic is correct, but a bit harder to follow.
+Deep nesting makes the function harder to scan quickly.
+Refactored:
+Uses early return → handle the “exit cases” first, then move to the next condition.
+Logic flows top-to-bottom, no extra indentation.
+Comments are reduced to explain business rules, not obvious code.
